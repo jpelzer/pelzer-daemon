@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:sa="https://spring-annotation.dev.java.net/context"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd 
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-2.5.xsd
+"
+	default-autowire="byType" default-lazy-init="true">
+	<context:annotation-config />
+	<context:component-scan base-package="com.pelzer" />
+
+	<bean id="propertyConfigurer" class="com.pelzer.util.SpringPropertyLoader"
+		lazy-init="false"></bean>
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${panic.smtp.host}" />
+		<property name="port" value="${panic.smtp.port}" />
+		<property name="username" value="${panic.username}" />
+		<property name="password" value="${panic.password}" />
+
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="morphia" class="com.google.code.morphia.Morphia" />
+
+	<bean id="mongo" class="com.mongodb.Mongo">
+		<constructor-arg type="String" value="${mongodb.server}" />
+	</bean>
+
+	<bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+		<constructor-arg ref="contextSource" />
+	</bean>
+
+</beans>
+
