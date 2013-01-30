@@ -2,9 +2,11 @@ package com.pelzer.util.daemon.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import org.bson.types.ObjectId;
-import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
+
+import com.github.jmkgreen.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.annotations.Id;
 import com.pelzer.util.daemon.DaemonStatus;
 
 /**

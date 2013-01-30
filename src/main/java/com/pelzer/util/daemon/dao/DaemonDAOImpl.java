@@ -7,9 +7,9 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.code.morphia.Key;
-import com.google.code.morphia.Morphia;
-import com.google.code.morphia.dao.BasicDAO;
+import com.github.jmkgreen.morphia.Key;
+import com.github.jmkgreen.morphia.Morphia;
+import com.github.jmkgreen.morphia.dao.BasicDAO;
 import com.mongodb.Mongo;
 import com.pelzer.util.Logging;
 import com.pelzer.util.daemon.DaemonConstants;

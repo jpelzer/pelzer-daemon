@@ -1,9 +1,11 @@
 package com.pelzer.util.daemon.beans;
 
 import java.io.Serializable;
+
 import org.bson.types.ObjectId;
-import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
+
+import com.github.jmkgreen.morphia.annotations.Entity;
+import com.github.jmkgreen.morphia.annotations.Id;
 
 @Entity
 public class ServerBean implements Serializable {
