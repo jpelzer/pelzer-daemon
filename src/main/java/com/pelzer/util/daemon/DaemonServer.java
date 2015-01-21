@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -51,16 +52,20 @@ public class DaemonServer extends UnicastRemoteObject implements DaemonServerRem
   public static void main(final String args[]) {
     try {
       log.debug("Initializing Spring...");
-      final DaemonServer server = SpringUtil.getInstance().getBean(DaemonServer.class);
+
+      final DaemonServer server = SpringUtil.getInstance().getApplicationContext().getBean(DaemonServer.class);
       log.debug("Getting a security manager");
       if (System.getSecurityManager() == null) {
         System.setSecurityManager(new RMISecurityManager());
       }
-      log.debug("Binding the DaemonServer to '" + DaemonConstants.RMI_URL + "'");
-      Naming.rebind(DaemonConstants.RMI_URL, server);
-      log.debug("DaemonServer succesfully bound to " + DaemonConstants.RMI_URL);
+
+      LocateRegistry.createRegistry(1099);
+
+      log.debug("Binding the DaemonServer to '" + DaemonConstants.SERVER_RMI_URL + "'");
+      Naming.rebind(DaemonConstants.SERVER_RMI_URL, server);
+      log.debug("DaemonServer successfully bound to " + DaemonConstants.SERVER_RMI_URL);
     } catch (final Exception ex) {
-      log.fatal("DaemonServer failed binding to " + DaemonConstants.RMI_URL);
+      log.fatal("DaemonServer failed binding to " + DaemonConstants.SERVER_RMI_URL);
       log.fatal("Error DaemonServer binding error: ", ex);
       System.exit(1);
     }

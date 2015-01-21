@@ -133,10 +133,10 @@ public class SingletonUtility {
           cachedServerStub = null;
         } else {
           if (OBNOXIOUS) {
-            debug.debug("Getting new connection to daemon server at '" + DaemonConstants.RMI_URL + "'");
+            debug.debug("Getting new connection to daemon server at '" + DaemonConstants.CLIENT_RMI_URL + "'");
           }
-          daemonServer = (DaemonServerRemoteInt) Naming.lookup(DaemonConstants.RMI_URL);
-          debug.debug("Got new connection to DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+          daemonServer = (DaemonServerRemoteInt) Naming.lookup(DaemonConstants.CLIENT_RMI_URL);
+          debug.debug("Got new connection to DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
         }
         daemonServer.noop();
         // If we're here, we got a connection.
@@ -147,7 +147,7 @@ public class SingletonUtility {
       } catch (final Exception ex2) {
         if (tries++ > 12) {
           tries = 0;
-          debug.debug("Still trying to get connection to DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+          debug.debug("Still trying to get connection to DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
           debug.error("Last exception;", ex2);
         }
         // Still having trouble getting the connection... Sleep for a while,

@@ -371,30 +371,30 @@ public class Daemon {
     private void connect() {
       try {
         if (daemonServer == null)
-          throw new RemoteException("Don't have initial connection to the DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+          throw new RemoteException("Don't have initial connection to the DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
         daemonServer.noop();
         // If we got here, we have a connection to the DaemonServer and it is
         // functional... Return.
         return;
       } catch (final RemoteException ex) {
         if (daemonServer == null) {
-          debug.debug("Getting initial connection to the DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+          debug.debug("Getting initial connection to the DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
         } else {
-          debug.debug("Lost connection to DaemonServer. Going to reconnect to DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+          debug.debug("Lost connection to DaemonServer. Going to reconnect to DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
         }
         int tries = 0;
         while (true) {
           try {
-            daemonServer = (DaemonServerRemoteInt) Naming.lookup(DaemonConstants.RMI_URL);
+            daemonServer = (DaemonServerRemoteInt) Naming.lookup(DaemonConstants.CLIENT_RMI_URL);
             serverBuildNumber = daemonServer.getBuildNumber();
             // If we're here, we got a connection...
-            debug.debug("Got connection to DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+            debug.debug("Got connection to DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
             debug.debug("Daemon build (" + PropertyManager.getProperty("build.number") + ") connected to DaemonServer build (" + serverBuildNumber + ")");
             return;
           } catch (final Exception ex2) {
             if (tries++ > 12) {
               tries = 0;
-              debug.debug("Still trying to get connection to DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+              debug.debug("Still trying to get connection to DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
             }
             // Still having trouble getting the connection... Sleep for a while,
             // then we'll try again.

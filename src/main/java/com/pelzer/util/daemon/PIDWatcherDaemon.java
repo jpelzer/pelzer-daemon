@@ -67,10 +67,10 @@ public class PIDWatcherDaemon {
      * looks at each log file to see if it's gotten too big.
      */
     private void scanFolder(final String rootFolder) {
-      // log.debug("Scanning folder '" + rootFolder + "'");
+      log.debug("Scanning folder '" + rootFolder + "'");
       final File folder = new File(rootFolder);
-      if (!folder.exists() || !folder.isDirectory()) {
-        debug.error("Can't scan '" + rootFolder + "', it either doesn't exist or it isn't a folder.");
+      if (!folder.exists() || !folder.isDirectory() || folder.listFiles() == null) {
+        debug.error("Can't scan '" + rootFolder + "', it either doesn't exist or it isn't a folder we can see.");
         return;
       }
       final File[] subfolders = folder.listFiles(new FolderFilter());

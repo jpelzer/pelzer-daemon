@@ -273,15 +273,15 @@ public class DaemonManager {
       int tries = 0;
       while (true) {
         try {
-          final DaemonServerRemoteInt daemonServer = (DaemonServerRemoteInt) Naming.lookup(DaemonConstants.RMI_URL);
+          final DaemonServerRemoteInt daemonServer = (DaemonServerRemoteInt) Naming.lookup(DaemonConstants.CLIENT_RMI_URL);
           daemonServer.noop();
           // If we're here, we got a connection...
-          debug.debug("Got connection to DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+          debug.debug("Got connection to DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
           return daemonServer;
         } catch (final Exception ex2) {
           if (tries++ > 12) {
             tries = 0;
-            debug.debug("Still trying to get connection to DaemonServer at '" + DaemonConstants.RMI_URL + "'");
+            debug.debug("Still trying to get connection to DaemonServer at '" + DaemonConstants.CLIENT_RMI_URL + "'");
           }
           // Still having trouble getting the connection... Sleep for a while,
           // then we'll try again.

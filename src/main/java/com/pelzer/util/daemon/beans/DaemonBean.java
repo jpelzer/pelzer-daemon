@@ -5,9 +5,9 @@ import java.util.Date;
 
 import org.bson.types.ObjectId;
 
-import com.github.jmkgreen.morphia.annotations.Entity;
-import com.github.jmkgreen.morphia.annotations.Id;
 import com.pelzer.util.daemon.DaemonStatus;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 
 /**
  * A bean the defines a daemon, containing fields for its properties, such as

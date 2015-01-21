@@ -2,10 +2,10 @@ package com.pelzer.util.daemon.dao;
 
 import java.util.List;
 
-import com.github.jmkgreen.morphia.Key;
 import com.pelzer.util.daemon.DaemonStatus;
 import com.pelzer.util.daemon.beans.DaemonBean;
 import com.pelzer.util.daemon.beans.ServerBean;
+import org.mongodb.morphia.Key;
 
 /**
  * The DaemonDAO interacts with its namesake objects.

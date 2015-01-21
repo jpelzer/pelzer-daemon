@@ -1,9 +1,9 @@
 package com.pelzer.util;
 
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 
 import com.pelzer.util.spring.SpringUtil;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 public class PanicHelper {
   private static Logging.Logger log = Logging.getLogger(PanicHelper.class);
