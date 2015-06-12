@@ -1,47 +1,64 @@
 package com.pelzer.util.daemon.dao;
 
+import com.pelzer.util.daemon.DaemonStatus;
+import com.pelzer.util.daemon.domain.Daemon;
+import com.pelzer.util.daemon.domain.Server;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Key;
+import org.mongodb.morphia.dao.BasicDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.List;
 
-import com.pelzer.util.daemon.DaemonStatus;
-import com.pelzer.util.daemon.beans.DaemonBean;
-import com.pelzer.util.daemon.beans.ServerBean;
-import org.mongodb.morphia.Key;
+@Service
+public class DaemonDAO extends BasicDAO<Daemon, ObjectId>{
 
-/**
- * The DaemonDAO interacts with its namesake objects.
- */
-public interface DaemonDAO {
-  final static String BEAN_NAME = "com.pelzer.util.daemon.dao.DaemonDAO";
-  
-  /** @return a list of all the daemons the daemon system is aware of. */
-  List<DaemonBean> getAllKnownDaemons();
-  
-  /**
-   * Called periodically by the daemon server to update the database if a
-   * particular daemon hasn't been updated in the past timeout period. Used to
-   * mark daemons missing when a server goes down or the daemon manager dies.
-   */
-  void expireMissingDaemons();
-  
-  /** Sets the current status of the daemon. */
-  void setDaemonStatus(DaemonBean daemonBean, DaemonStatus status);
-  
-  /** Sets the target status of the daemon. */
-  void setTargetDaemonStatus(DaemonBean daemonBean, DaemonStatus status);
-  
-  /** Updates the given daemon to run on the given server. */
-  void setServer(DaemonBean daemonBean, ServerBean serverBean);
-  
-  /**
-   * Loads a daemon bean from the db or null if it can't find one.
-   */
-  DaemonBean getDaemonBean(String daemonName);
-  
-  /**
-   * Saves the given bean back to the db, or creates a new entry if the daemon
-   * didn't exist
-   */
-  void createOrUpdate(DaemonBean daemonBean);
-  
-  Key<DaemonBean> save(final DaemonBean entity);
+  @Autowired
+  public DaemonDAO(Datastore ds){
+    super(ds);
+  }
+
+  public List<Daemon> getAllKnownDaemons(){
+    return find(createQuery()).asList();
+  }
+
+  public void expireMissingDaemons(){
+    Date expireDate = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24));
+    update(createQuery().field("lastUpdate").lessThan(expireDate).field("status").equal(DaemonStatus.RUNNING), createUpdateOperations().set("status", DaemonStatus.STOPPED));
+  }
+
+  public void setDaemonStatus(final Daemon daemonBean, final DaemonStatus status){
+    //TODO: Rewrite to use update query
+    final Daemon db = get(daemonBean.getId());
+    db.setStatus(status);
+    save(db);
+  }
+
+  public void setTargetDaemonStatus(final Daemon daemonBean, final DaemonStatus status){
+    update(createQuery().field("_id").equal(daemonBean.getId()), createUpdateOperations().set("targetStatus", status));
+  }
+
+  public void setServer(final Daemon daemonBean, final Server serverBean){
+    //TODO: Rewrite to use update query
+    final Daemon db = get(daemonBean.getId());
+    db.setServer(serverBean);
+    save(db);
+  }
+
+  public Daemon getDaemonBean(final String daemonName){
+    return findOne(createQuery().field("name").equal(daemonName));
+  }
+
+  public void createOrUpdate(final Daemon daemonBean){
+    save(daemonBean);
+  }
+
+  @Override
+  public Key<Daemon> save(final Daemon entity){
+    return super.save(entity);
+  }
+
 }

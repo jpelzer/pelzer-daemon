@@ -2,11 +2,12 @@ package com.pelzer.util.daemon;
 
 import java.util.List;
 
+import groovy.transform.CompileStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pelzer.util.Logging;
-import com.pelzer.util.daemon.beans.DaemonBean;
+import com.pelzer.util.daemon.domain.Daemon;
 import com.pelzer.util.daemon.dao.DaemonDAO;
 import com.pelzer.util.daemon.dao.ServerDAO;
 import com.pelzer.util.spring.SpringUtil;
@@ -15,9 +16,9 @@ import com.pelzer.util.spring.SpringUtil;
  * This class allows command-line editing of daemons (start/stop commands, log
  * files, status, etc)
  */
-@Service(DaemonEdit.BEAN_NAME)
+@Service
+@CompileStatic
 public class DaemonEdit {
-  public static final String    BEAN_NAME = "com.pelzer.util.daemon.DaemonEdit";
   private static Logging.Logger log       = Logging.getLogger(DaemonEdit.class);
   
   private final DaemonDAO       daemonDAO;
@@ -31,7 +32,7 @@ public class DaemonEdit {
   
   public static void main(final String[] args) {
     Logging.mute();
-    final DaemonEdit daemonEdit = SpringUtil.getInstance().getBean(DaemonEdit.class);
+    final DaemonEdit daemonEdit = SpringUtil.getInstance().getApplicationContext().getBean(DaemonEdit.class);
     Logging.unmute();
     daemonEdit.command(args);
   }
@@ -62,12 +63,12 @@ public class DaemonEdit {
     if (args.length < 2)
       printUsageAndExit();
     final String daemonName = args[1];
-    DaemonBean daemon = daemonDAO.getDaemonBean(daemonName);
+    Daemon daemon = daemonDAO.getDaemonBean(daemonName);
     if (daemon != null) {
       log.error("CREATE: Daemon {} already exists.", daemonName);
       return;
     }
-    daemon = new DaemonBean();
+    daemon = new Daemon();
     daemon.setName(daemonName);
     daemonDAO.createOrUpdate(daemon);
     handleList(args);
@@ -78,7 +79,7 @@ public class DaemonEdit {
     if (args.length < 5)
       printUsageAndExit();
     final String daemonName = args[1];
-    final DaemonBean daemon = daemonDAO.getDaemonBean(daemonName);
+    final Daemon daemon = daemonDAO.getDaemonBean(daemonName);
     final String key = args[3];
     if ("SERVER".equalsIgnoreCase(key))
       daemon.setServer(serverDAO.getOrCreateServer(args[4]));
@@ -107,13 +108,13 @@ public class DaemonEdit {
       showStopped = !("RUNNING".equalsIgnoreCase(args[1]));
       showRunning = !("STOPPED".equalsIgnoreCase(args[1]));
     }
-    final List<DaemonBean> daemons = daemonDAO.getAllKnownDaemons();
-    for (final DaemonBean daemon : daemons)
+    final List<Daemon> daemons = daemonDAO.getAllKnownDaemons();
+    for (final Daemon daemon : daemons)
       if ((daemon.getStatus() == DaemonStatus.RUNNING && showRunning) || (daemon.getStatus() == DaemonStatus.STOPPED && showStopped))
         printDaemon(daemon);
   }
   
-  private void printDaemon(final DaemonBean daemon) {
+  private void printDaemon(final Daemon daemon) {
     log.debug("   Daemon: {}", daemon.getName());
     log.debug("    start: {}", toAppendedString(daemon.getStartCommandLine()));
     log.debug("     stop: {}", toAppendedString(daemon.getStopCommandLine()));

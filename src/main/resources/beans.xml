@@ -34,7 +34,12 @@
     <bean id="morphia" class="org.mongodb.morphia.Morphia"/>
 
     <bean id="mongo" class="com.mongodb.Mongo">
-        <constructor-arg type="String" value="${mongodb.server}" />
+        <constructor-arg type="String" value="${mongodb.host}" />
+    </bean>
+
+    <bean id="mongoDatastore" factory-bean="morphia" factory-method="createDatastore">
+        <constructor-arg type="com.mongodb.Mongo" ref="mongo"/>
+        <constructor-arg type="java.lang.String" value="daemon"/>
     </bean>
 
 </beans>

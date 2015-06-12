@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.pelzer.util.Logging;
 import com.pelzer.util.StopWatch;
-import com.pelzer.util.daemon.beans.DaemonBean;
 import com.pelzer.util.daemon.dao.DaemonDAO;
+import com.pelzer.util.daemon.domain.Daemon;
 import com.pelzer.util.spring.SpringUtil;
 
 /**
@@ -16,7 +16,7 @@ import com.pelzer.util.spring.SpringUtil;
  */
 public class Controller {
   private static Logging.Logger  debug     = Logging.getLogger(Controller.class);
-  private static final DaemonDAO daemonDAO = SpringUtil.getInstance().getBean(DaemonDAO.class);
+  private static final DaemonDAO daemonDAO = SpringUtil.getInstance().getApplicationContext().getBean(DaemonDAO.class);
   
   public static void main(final String[] args) {
     debug.debug("Starting up...");
@@ -69,8 +69,8 @@ public class Controller {
     } else if (action == Action.SHUTDOWN) {
       // Shut down every known daemon
       daemonNames = new ArrayList<String>();
-      final List<DaemonBean> daemons = daemonDAO.getAllKnownDaemons();
-      for (final DaemonBean daemon : daemons) {
+      final List<Daemon> daemons = daemonDAO.getAllKnownDaemons();
+      for (final Daemon daemon : daemons) {
         daemonDAO.setTargetDaemonStatus(daemon, DaemonStatus.STOPPED);
         daemonNames.add(daemon.getName());
       }
@@ -79,9 +79,9 @@ public class Controller {
         blockWaiting(daemonDAO, daemonNames);
       }
     } else {
-      final List<DaemonBean> daemons = getDaemonBeans(daemonDAO, daemonNames);
+      final List<Daemon> daemons = getDaemons(daemonDAO, daemonNames);
       // Mark the db for the system to do the action...
-      for (final DaemonBean daemon : daemons) {
+      for (final Daemon daemon : daemons) {
         switch (action) {
           case START:
             daemonDAO.setTargetDaemonStatus(daemon, DaemonStatus.RUNNING);
@@ -112,8 +112,8 @@ public class Controller {
     int ticks = 0;
     while (atLeastOneMismatch) {
       atLeastOneMismatch = false;
-      final List<DaemonBean> daemons = getDaemonBeans(daemonDAO, daemonNames);
-      for (final DaemonBean daemon : daemons)
+      final List<Daemon> daemons = getDaemons(daemonDAO, daemonNames);
+      for (final Daemon daemon : daemons)
         if (daemon.getStatus() != daemon.getTargetStatus()) {
           if (ticks % 30 == 0) {
             println("'" + daemon.getName() + "' has not yet responded, still waiting...");
@@ -129,8 +129,8 @@ public class Controller {
     println("All daemons have responded.");
   }
   
-  private static List<DaemonBean> getDaemonBeans(final DaemonDAO daemonDAO, final List<String> daemonNames) {
-    final List<DaemonBean> daemons = new ArrayList<DaemonBean>(daemonNames.size());
+  private static List<Daemon> getDaemons(final DaemonDAO daemonDAO, final List<String> daemonNames) {
+    final List<Daemon> daemons = new ArrayList<Daemon>(daemonNames.size());
     for (final String name : daemonNames) {
       daemons.add(daemonDAO.getDaemonBean(name));
     }

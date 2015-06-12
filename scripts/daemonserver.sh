@@ -8,7 +8,7 @@ DAEMON_NAME=daemonserver
 JAVA_CLASS=com.pelzer.util.daemon.DaemonServer
 # default or multilog. You probably want default.
 LOG_TYPE=default
-PELZER_ENV="DEV -Dspring.panic.smtp.host=localhost -Dspring.panic.smtp.port=25 -Dspring.panic.username=foo -Dspring.panic.password=bar -Dspring.mongodb.server=localhost"
+PELZER_ENV="DEV -Dspring.panic.smtp.host=localhost -Dspring.panic.smtp.port=25 -Dspring.panic.username=foo -Dspring.panic.password=bar -Dspring.mongodb.host=localhost"
 
 # 'start', 'stop', 'restart', etc
 ACTION=$1

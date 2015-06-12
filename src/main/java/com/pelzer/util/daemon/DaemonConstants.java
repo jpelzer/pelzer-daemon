@@ -3,8 +3,6 @@ package com.pelzer.util.daemon;
 import com.pelzer.util.OverridableFields;
 
 public class DaemonConstants extends OverridableFields {
-  public static String SERVER_RMI_URL = "rmi://localhost:1099/DaemonManager";
-  public static String CLIENT_RMI_URL = "rmi://localhost:1099/DaemonManager";
   public static String MONGO_DB_NAME = "daemon";
   
   /** How long between refreshes of 'known-daemons', defaults to 5 minutes */
